@@ -1,40 +1,43 @@
-# Parkinson-s-Voice-and-Clinical-Modeling
-End-to-end machine learning workflow for Parkinson’s disease classification using the PPMI dataset, featuring preprocessing, UPDRS progression modeling, feature interpretation with SHAP, and robustness testing under simulated noise conditions.
-Model Explainability using SHAP
+# Parkinson’s Voice and Clinical Modeling
 
-To ensure transparency and interpretability of the machine learning model used for Parkinson’s disease classification, this notebook implements SHapley Additive exPlanations (SHAP). SHAP is a game-theoretic approach that quantifies each feature’s contribution to the model’s predictions.
+**An end-to-end machine learning workflow for Parkinson’s disease classification using the PPMI dataset.** This project integrates data preprocessing, UPDRS progression modeling, model training, feature interpretation with SHAP, and robustness testing under simulated noise conditions. The repository is designed to be clear, accessible, and portfolio-friendly while still reflecting best practices in medical machine learning.
 
-In this project, I trained a Random Forest classifier on clinical and/or voice-derived features. To interpret the influence of individual predictors, I used the following workflow:
+---
 
+##  Model Explainability with SHAP
+
+To understand how the model makes predictions, this project incorporates **SHapley Additive exPlanations (SHAP)**. SHAP helps identify how each feature contributes to the model’s Parkinson’s vs. control classification.
+
+### How It Works
+
+A Random Forest classifier is trained on clinical and/or voice-derived features. SHAP is then used to compute feature importance values:
+
+```python
 explainer = shap.TreeExplainer(clf)
 shap_vals = explainer.shap_values(X_test)
-# For binary classification shap_vals[1] corresponds to positive class
 shap.summary_plot(shap_vals[1], X_test, show=False)
 plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, 'shap_summary.png'))
-print('Saved SHAP summary plot to output folder')
+```
 
-What this achieves
+### What This Provides
 
-Global feature importance: Identifies which acoustic or clinical variables most strongly contribute to the model’s Parkinson’s vs control classification.
+* **Global feature importance** — identifies which features most strongly influence predictions.
+* **Directionality of effects** — shows whether higher values increase or decrease PD likelihood.
+* **Reproducible documentation** — SHAP plots are automatically saved for transparency.
 
-Directionality of effects: Shows whether increases in a feature raise or lower PD probability.
+Explainability is essential in medical ML, making this a valuable addition for trust, future clinical use, and professional presentation.
 
-Reproducible documentation: The summary plot is saved to the output directory (shap_summary.png), allowing transparent reporting of the model’s behavior in the repository.
+---
 
-This aligns with current recommendations in medical machine learning, where explainability is essential for clinical trust, regulatory considerations, and scientific interpretability.
+##  Robustness Testing with Noise Perturbation
 
-Robustness Testing via Noise Perturbation
+Real-world clinical and voice data often contain noise from sensors, recording conditions, or environmental factors. This project includes a first-step robustness test by adding Gaussian noise to input features and re-evaluating model performance.
 
-To assess how well the trained model generalizes to imperfect or noisy data, I implemented an initial robustness evaluation framework. The goal is to simulate real-world variability — such as sensor noise or recording artifacts — and measure how much model performance degrades under controlled perturbations.
+### Method
 
-The following function introduces Gaussian noise based on a specified signal-to-noise ratio (SNR):
-
+```python
 def evaluate_robustness_numeric(clf, X_test, y_test, noise_snr_db=20):
-    """Add Gaussian noise scaled by desired SNR (dB) to numeric features and eval model.
-    This is a placeholder — for audio-level noise you should perturb audio files before
-    extracting features in R or Python audio pipelines.
-    """
     Xn = X_test.copy()
     rms_signal = np.sqrt((Xn ** 2).mean())
     snr_lin = 10 ** (noise_snr_db / 10.0)
@@ -44,35 +47,41 @@ def evaluate_robustness_numeric(clf, X_test, y_test, noise_snr_db=20):
     y_pred = clf.predict(Xn)
     acc = accuracy_score(y_test, y_pred)
     print(f'Robustness test at SNR={noise_snr_db} dB: Accuracy = {acc:.4f}')
+```
 
-Why this matters
+### Why It Matters
 
-Medical voice datasets often contain real-world noise (background speech, microphone quality differences, device variability).
+* Simulates noisy recordings or device variability.
+* Tests if the classifier is stable under perturbations.
+* Encourages development of **clinically reliable**, not just statistically strong, models.
+* Forms a baseline for future robustness and adversarial tests.
 
-Robustness testing evaluates whether the classifier is overly sensitive to perturbations.
+Robustness is increasingly recognized as a requirement for responsible healthcare AI.
 
-This step encourages development of models that are clinically reliable, not just statistically accurate.
+---
 
-Forms the foundation for future work (e.g., adversarial robustness, domain shift evaluation).
+##  Reproducibility & Data Traceability
 
-In current machine learning literature, robustness evaluation is considered a core component of responsible deployment in healthcare contexts.
+To ensure full transparency and reproducibility, the notebook saves intermediate outputs, summary files, and diagnostic data.
 
-Reproducibility & Data Traceability
+### Example
 
-To support reproducibility, the notebook saves intermediate outputs and diagnostic tables.
-This ensures transparency in how data were filtered, cleaned, and prepared.
-
-Example:
-
+```python
 if participant_master is not None:
     out_fp = os.path.join(OUTPUT_DIR, 'participant_master_sample.csv')
     participant_master.head(200).to_csv(out_fp, index=False)
     print('Saved participant_master sample to', out_fp)
+```
 
-Purpose
+### Why This Step Is Important
 
-Provides a verifiable record of the preprocessing pipeline.
+* Creates a clear record of preprocessing decisions.
+* Allows other researchers or collaborators to inspect intermediate stages.
+* Aligns with best practices in open, traceable scientific workflows.
 
-Allows collaborators and reviewers to inspect input data formats.
+---
 
-Aligns with open-science principles recommended for clinical machine learning research.
+
+
+It is designed to be both a practical tool and a strong demonstration of your applied machine learning and biomedical data analysis skills.
+
