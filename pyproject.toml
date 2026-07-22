@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parkinsons-voice-clinical-modeling"
+version = "0.1.0"
+description = "PPMI clinical-data pipeline for Parkinson's disease classification and UPDRS progression modeling, with SHAP/LIME explainability and feature-level noise-robustness testing."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Ahmed Fawaz", email = "ahmedfawaz879@users.noreply.github.com"},
+]
+keywords = ["parkinsons", "ppmi", "clinical-ai", "updrs", "explainability", "shap", "lime", "random-forest"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "scikit-learn>=1.3.0",
+    "imbalanced-learn>=0.11.0",
+    "shap>=0.44.0",
+    "lime>=0.2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[project.scripts]
+parkinsons-voice = "parkinsons_voice.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ahmedfawaz879/Parkinson-s-Voice-and-Clinical-Modeling"
+Repository = "https://github.com/ahmedfawaz879/Parkinson-s-Voice-and-Clinical-Modeling"
+Issues = "https://github.com/ahmedfawaz879/Parkinson-s-Voice-and-Clinical-Modeling/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

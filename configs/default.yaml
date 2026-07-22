@@ -1,0 +1,67 @@
+# ============================================================================
+# Parkinson's Voice & Clinical Modeling - Default Configuration
+# ============================================================================
+# Override any value via a custom YAML passed to the CLI, e.g.:
+#   parkinsons-voice train --config configs/custom.yaml
+# ============================================================================
+
+# --- Reproducibility ---------------------------------------------------------
+seed: 42   # global random seed; propagated to numpy, splits, and estimators
+
+# --- Data ---------------------------------------------------------------------
+# PPMI data is gated behind a Data Use Agreement (https://www.ppmi-info.org/)
+# and is NOT bundled with this repo. Place downloaded CSVs under raw_dir, or
+# already-cleaned tables under processed_dir. See README for details.
+data:
+  raw_dir: "./PPMI_raw"
+  processed_dir: "./processed"
+  output_dir: "./output"
+  target_col: "TARGET"      # binary column: 1 = PD, 0 = Control
+  id_col: "PATNO"
+
+# --- Train/test split ----------------------------------------------------------
+split:
+  test_size: 0.20
+  random_state: 42
+  stratify: true
+
+# --- Feature engineering / preprocessing ---------------------------------------
+features:
+  impute_strategy: "median"
+  scale: true
+
+# --- Class imbalance handling ---------------------------------------------------
+# The original notebook listed imbalanced-learn as a dependency but never
+# called it from any cell. This config makes the (previously unused) SMOTE
+# resampling step real and toggleable.
+imbalance:
+  method: "smote"          # one of: "smote", "none"
+  random_state: 42
+
+# --- Models ----------------------------------------------------------------------
+model:
+  classifier:
+    n_estimators: 200
+    random_state: 0
+    n_jobs: -1
+  updrs_regressor:
+    n_estimators: 200
+    random_state: 0
+    n_jobs: -1
+
+# --- Explainability (SHAP / LIME) -------------------------------------------------
+explain:
+  shap_max_background: 100   # cap rows passed to SHAP for tractability
+  lime_num_features: 10
+  lime_num_samples: 500
+
+# --- Robustness testing ------------------------------------------------------------
+# Feature-level Gaussian-noise perturbation only. Audio-level noise (perturbing
+# raw voice recordings before feature extraction) is out of scope for this repo -
+# no audio pipeline exists here. See robustness.py docstring for details.
+robustness:
+  snr_levels_db: [30, 20, 10, 5, 0]
+
+# --- Output -----------------------------------------------------------------------
+output:
+  artifacts_dir: "./output/artifacts"
