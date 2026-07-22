@@ -1,0 +1,43 @@
+# --- Python -------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.installed.cfg
+*.egg
+
+# --- Virtual environments -------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+
+# --- Test / lint / type-check caches --------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Jupyter ----------------------------------------------------------------
+.ipynb_checkpoints/
+
+# --- PPMI data & pipeline artifacts (never commit gated clinical data) ------
+PPMI_raw/
+processed/
+output/
+runs/
+*.pkl
+*.joblib
+*.h5
+
+# --- Editors / OS -------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
