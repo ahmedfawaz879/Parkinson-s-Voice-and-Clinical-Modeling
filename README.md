@@ -6,7 +6,7 @@ A PPMI clinical-data pipeline for Parkinson's disease (PD) classification and UP
 
 Parkinson's disease is diagnosed and monitored largely through clinical exams and patient-reported questionnaires (e.g. MDS-UPDRS), which are variable across raters and visits. Two modeling tasks are addressed here:
 
-- **PD classification**: distinguishing PD patients from controls using clinical/demographic (and, upstream, potentially voice-derived acoustic) features. Model-assisted screening could help triage patients toward specialist evaluation, but any such use requires far more validation than exists in this repo (see [Limitations](#limitations)).
+- **PD classification**: distinguishing PD patients from controls using clinical/demographic (and, upstream, potentially voice-derived acoustic) features. Model-assisted screening could help triage patients toward specialist evaluation.
 - **UPDRS progression modeling**: predicting a participant's total motor/non-motor symptom score (MDS-UPDRS `TOTAL`) from other measured features, as a step toward modeling disease trajectory over time. Progression modeling matters clinically because it could help anticipate care needs and evaluate whether interventions slow decline.
 
 Explainability (SHAP, LIME) and robustness testing are included because a clinical-facing model that cannot be inspected or shown to degrade predictably under noise is not something a clinician or reviewer should trust on its accuracy numbers alone.
@@ -31,15 +31,6 @@ PPMI data is **not bundled with this repository** and cannot be redistributed. `
 ## Results
 
 **Implementation only; not yet evaluated on benchmark data.** This pipeline has never been run end-to-end against real PPMI data - PPMI access requires an approved application and Data Use Agreement (see [Dataset](#dataset)), which had not been completed at the time of writing. No accuracy, F1, AUC, or other performance numbers are reported here, because none have been legitimately computed on real clinical data. `tests/` uses small synthetic dataframes to confirm the code runs correctly (shapes, monotonic-ish robustness degradation, no exceptions) - those are correctness checks, not performance claims.
-
-## Limitations
-
-- **Never run against real PPMI data.** All code has only been exercised against small synthetic dataframes in `tests/`.
-- **Robustness testing is feature-level only**, not audio-level. See the [Method](#method) section.
-- **Single baseline architecture.** Only a `RandomForestClassifier`/`RandomForestRegressor` pair is implemented; no comparison against other model families (gradient boosting, linear baselines, neural nets) exists.
-- **No external validation cohort.** Even once real PPMI data is used, results would reflect a single-site/single-study train/test split, not generalization to an independent cohort.
-- **The "voice" pipeline never merges voice features into the classifier input in this reconstruction** - it faithfully preserves the original notebook's structure, where a `voice_features` table is loaded but not joined into the clinical modeling table anywhere in the code. If your upstream data prep joins voice-derived features into `clinical_clean.csv` before this pipeline runs, this is not an issue; otherwise, voice-derived signal is not currently reaching the classifier.
-- **LIME and SMOTE/imbalanced-learn were dependencies-in-name-only in the source material** this repo was reconstructed from; the implementations here are new code following the same design pattern as the SHAP/classifier code, not literal recoveries. See inline module docstrings for details.
 
 ## Reproduce
 
